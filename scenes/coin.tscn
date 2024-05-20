@@ -1,0 +1,145 @@
+[gd_scene load_steps=15 format=3 uid="uid://cvcvy42pqp85x"]
+
+[ext_resource type="Texture2D" uid="uid://dm8dwx1esatxe" path="res://assets/Images/coin.png" id="1_1p6b4"]
+[ext_resource type="Script" path="res://scripts/coin.gd" id="1_51pco"]
+[ext_resource type="Texture2D" uid="uid://cers2so3lbub3" path="res://assets/Images/coinglint.png" id="2_l1vlq"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_f8eam"]
+friction = 0.05
+bounce = 0.51
+absorbent = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ll3jj"]
+atlas = ExtResource("1_1p6b4")
+region = Rect2(0, 0, 5, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ctkjk"]
+atlas = ExtResource("1_1p6b4")
+region = Rect2(5, 0, 5, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x6pbg"]
+atlas = ExtResource("1_1p6b4")
+region = Rect2(10, 0, 5, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lge1x"]
+atlas = ExtResource("1_1p6b4")
+region = Rect2(15, 0, 5, 5)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ev23s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ll3jj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ctkjk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x6pbg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lge1x")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_xncm7"]
+blend_mode = 1
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yqbl2"]
+radius = 2.0
+
+[sub_resource type="Animation" id="Animation_an8k3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glint:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Glint:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.537255, 0.537255, 0.537255, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_i8qx1"]
+resource_name = "glint"
+length = 0.5
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glint:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1.36604),
+"update": 0,
+"values": [Vector2(0.93, 0.93), Vector2(1.08, 1.08)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Glint:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.537255, 0.537255, 0.537255, 1), Color(0.243137, 0.243137, 0.243137, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_b1owq"]
+_data = {
+"RESET": SubResource("Animation_an8k3"),
+"glint": SubResource("Animation_i8qx1")
+}
+
+[node name="Coin" type="RigidBody2D"]
+collision_layer = 0
+mass = 0.05
+physics_material_override = SubResource("PhysicsMaterial_f8eam")
+gravity_scale = 0.25
+can_sleep = false
+lock_rotation = true
+linear_damp = 0.2
+script = ExtResource("1_51pco")
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_ev23s")
+autoplay = "default"
+frame_progress = 0.607013
+
+[node name="Glint" type="Sprite2D" parent="."]
+modulate = Color(0.537255, 0.537255, 0.537255, 1)
+material = SubResource("CanvasItemMaterial_xncm7")
+position = Vector2(0.5, -1)
+texture = ExtResource("2_l1vlq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("CircleShape2D_yqbl2")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_b1owq")
+}
+autoplay = "glint"

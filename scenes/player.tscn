@@ -41,24 +41,6 @@ tracks/0/keys = {
 "values": [8, 9, 10, 11]
 }
 
-[sub_resource type="Animation" id="Animation_l0siu"]
-resource_name = "walk"
-length = 1.12
-loop_mode = 1
-step = 0.14
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.14, 0.28, 0.42, 0.56, 0.7, 0.84, 0.98),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [1, 2, 3, 4, 5, 6, 7, 0]
-}
-
 [sub_resource type="Animation" id="Animation_yhpwf"]
 resource_name = "sprint"
 length = 1.12
@@ -77,6 +59,24 @@ tracks/0/keys = {
 "values": [1, 2, 3, 4, 5, 6, 7, 0]
 }
 
+[sub_resource type="Animation" id="Animation_l0siu"]
+resource_name = "walk"
+length = 1.12
+loop_mode = 1
+step = 0.14
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.14, 0.28, 0.42, 0.56, 0.7, 0.84, 0.98),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 2, 3, 4, 5, 6, 7, 0]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_anspb"]
 _data = {
 "RESET": SubResource("Animation_ik3k3"),
@@ -87,6 +87,7 @@ _data = {
 
 [node name="Player" type="CharacterBody2D"]
 z_index = 5
+floor_constant_speed = true
 floor_snap_length = 5.0
 script = ExtResource("1_awddv")
 
