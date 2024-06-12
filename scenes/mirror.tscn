@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://cb5808fkw076q"]
+
+[ext_resource type="Texture2D" uid="uid://boa4q37c3p6eb" path="res://assets/Images/Tiles1.png" id="1_ds828"]
+[ext_resource type="Script" path="res://scripts/Mirror.gd" id="2_m2wr4"]
+[ext_resource type="Texture2D" uid="uid://b0jo5irn88yvx" path="res://assets/Images/mirrormask.png" id="3_jdscj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pudbf"]
+size = Vector2(386, 104)
+
+[node name="Mirror" type="Sprite2D"]
+texture = ExtResource("1_ds828")
+region_enabled = true
+region_rect = Rect2(120, 168, 96, 48)
+script = ExtResource("2_m2wr4")
+
+[node name="MirrorMask" type="PointLight2D" parent="."]
+blend_mode = 2
+texture = ExtResource("3_jdscj")
+
+[node name="MirrorArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MirrorArea"]
+shape = SubResource("RectangleShape2D_pudbf")
+debug_color = Color(0.244776, 0.244776, 0.244776, 0.419608)
+
+[node name="MirroredSprites" type="Node2D" parent="."]
+
+[connection signal="body_entered" from="MirrorArea" to="." method="_on_mirror_area_body_entered"]
+[connection signal="body_exited" from="MirrorArea" to="." method="_on_mirror_area_body_exited"]

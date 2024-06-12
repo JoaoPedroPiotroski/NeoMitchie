@@ -45,9 +45,10 @@ var is_jumping = false
 var is_sliding = false
 
 var curr_anim = "idle"
+var look_dir = 1
 
 @onready var animation = $AnimationPlayer
-@onready var sprite = $Sprite2D
+@onready var sprite = $Sprite
 @onready var stairs_l_down = $Detectors/StairsLDown
 @onready var stairs_r_down = $Detectors/StairsRDown
 @onready var stairs_l_up = $Detectors/StairsLUp
@@ -64,6 +65,7 @@ func _physics_process(delta):
 	if get_floor_angle() < 1:
 		angle = get_floor_angle()
 	normal = get_floor_normal()
+	
 	# clocks
 	stairs_cd -= delta
 	slide_cd -= delta
@@ -71,7 +73,7 @@ func _physics_process(delta):
 	jump_time += delta
 	
 	# input
-	var h_dir = Input.get_axis("left", "right")
+	var h_dir = int(Input.is_action_pressed("right")) - int(Input.is_action_pressed("left"))
 	if Input.is_action_just_pressed("sprint"):
 		max_speed = base_max_speed * sprint_mult
 	if Input.is_action_just_released("sprint"):
@@ -86,7 +88,7 @@ func _physics_process(delta):
 	if abs(get_floor_angle()) >= SHALLOW_SLOPE_ANGLE and Input.is_action_pressed("down") and is_on_floor():
 		is_sliding = true
 		slide_cd = 0.2
-	if slide_cd < 0:
+	if slide_cd < 0 or not is_on_floor():
 		is_sliding = false
 		
 	# get slope type
@@ -109,8 +111,6 @@ func _physics_process(delta):
 		down_slope = slope_dir > 0
 	elif velocity.x < 0:
 		down_slope = slope_dir < 0
-	
-	print(normal.x, " ", is_on_floor())
 	
 	match (current_slope):
 		SHALLOW_SLOPE_ANGLE:
@@ -143,9 +143,11 @@ func _physics_process(delta):
 	velocity.y = move_toward(velocity.y, fall_speed, gravity * delta)
 		
 	# jump
+	var jumped_this_frame = false
 	if jump_rq > 0:
 		if is_on_floor():
 			jump_rq = -1
+			jumped_this_frame = true
 			is_jumping = true
 			floor_snap_length = 0
 			velocity.y = - (jump_velocity + 1.5 * int(abs(velocity.x) / jump_spd_increment))
@@ -158,7 +160,7 @@ func _physics_process(delta):
 	
 	# slope slide
 	
-	if is_sliding:
+	if is_sliding and not jumped_this_frame:
 		if current_slope == STEEP_SLOPE_ANGLE:
 			velocity.y += 24 * 4 * delta * 100
 			velocity.x += 30 * 1.5 * slope_dir * delta * 10
@@ -184,6 +186,7 @@ func _physics_process(delta):
 	# animation
 	
 	if h_dir != 0:
+		look_dir = h_dir
 		sprite.flip_h = h_dir > 0
 		if abs(velocity.x) > base_max_speed:
 			var transfer_time = curr_anim == "walk"

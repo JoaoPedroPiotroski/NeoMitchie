@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://cbvnauhc6k3yf"]
+[gd_scene load_steps=15 format=3 uid="uid://cbvnauhc6k3yf"]
 
 [ext_resource type="PackedScene" uid="uid://2vnpdbdqddca" path="res://scenes/player.tscn" id="1_q3n6p"]
 [ext_resource type="Texture2D" uid="uid://boa4q37c3p6eb" path="res://assets/Images/Tiles1.png" id="3_8lt44"]
 [ext_resource type="Script" path="res://scripts/test_coin_spawner.gd" id="3_h5mat"]
+[ext_resource type="PackedScene" uid="uid://cb5808fkw076q" path="res://scenes/mirror.tscn" id="4_jh6lp"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_xf75b"]
 distance = -12.0
@@ -221,7 +222,7 @@ disabled = true
 debug_color = Color(0, 0.6, 0.7, 0.42)
 
 [node name="Player" parent="." instance=ExtResource("1_q3n6p")]
-position = Vector2(49, -213)
+position = Vector2(450, 141)
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_7u0hm")
@@ -247,7 +248,7 @@ libraries = {
 autoplay = "move"
 
 [node name="Wheel" type="Node2D" parent="."]
-position = Vector2(490, 45)
+position = Vector2(1146, 191)
 rotation = 6.28319
 
 [node name="AnimatableBody2D" type="AnimatableBody2D" parent="Wheel"]
@@ -316,5 +317,14 @@ script = ExtResource("3_h5mat")
 [node name="Timer" type="Timer" parent="Node2D"]
 wait_time = 50.0
 autostart = true
+
+[node name="Mirror" parent="." instance=ExtResource("4_jh6lp")]
+position = Vector2(-189, -155)
+
+[node name="Mirror2" parent="." instance=ExtResource("4_jh6lp")]
+position = Vector2(-187, -218)
+
+[node name="Mirror3" parent="." instance=ExtResource("4_jh6lp")]
+position = Vector2(528, 110)
 
 [connection signal="timeout" from="Node2D/Timer" to="Node2D" method="_on_timer_timeout"]
