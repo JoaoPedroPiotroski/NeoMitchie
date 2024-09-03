@@ -39,6 +39,7 @@ var jump_rq = -1
 var jump_time = 0
 var slide_cd = -1
 var stairs_cd = -1
+var attack_rq = -1
 
 # Flags
 var is_jumping = false
@@ -71,9 +72,11 @@ func _physics_process(delta):
 	slide_cd -= delta
 	jump_rq -= delta
 	jump_time += delta
+	attack_rq -= delta
 	
 	# input
 	var h_dir = int(Input.is_action_pressed("right")) - int(Input.is_action_pressed("left"))
+	
 	if Input.is_action_just_pressed("sprint"):
 		max_speed = base_max_speed * sprint_mult
 	if Input.is_action_just_released("sprint"):
@@ -85,12 +88,17 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("jump"):
 		jump_time = 0
 		jump_rq = 0.2
+	if Input.is_action_just_pressed("attack"):
+		attack_rq = 1
 	if abs(get_floor_angle()) >= SHALLOW_SLOPE_ANGLE and Input.is_action_pressed("down") and is_on_floor():
 		is_sliding = true
 		slide_cd = 0.2
 	if slide_cd < 0 or not is_on_floor():
 		is_sliding = false
-		
+	if curr_anim == "attack":
+		h_dir = 0
+		jump_rq = -1
+	
 	# get slope type
 	slope_dir = 1 if normal.x > 0 else -1
 	
@@ -151,7 +159,6 @@ func _physics_process(delta):
 			is_jumping = true
 			floor_snap_length = 0
 			velocity.y = - (jump_velocity + 1.5 * int(abs(velocity.x) / jump_spd_increment))
-			#velocity = velocity.rotated(normal.angle())
 			if h_dir != 0:
 				velocity.x = velocity.x * jump_h_boost
 	
@@ -182,26 +189,56 @@ func _physics_process(delta):
 			floor_stop_on_slope = false
 			floor_snap_length = 8
 		is_jumping = not is_on_floor()
-		
-	# animation
 	
-	if h_dir != 0:
-		look_dir = h_dir
-		sprite.flip_h = h_dir > 0
-		if abs(velocity.x) > base_max_speed:
-			var transfer_time = curr_anim == "walk"
-			var current_anim_time = animation.get_current_animation_position()
-			curr_anim = "sprint"
-			if transfer_time:
-				animation.seek(current_anim_time, false)
+	# step
+	var path_obstructed = move_and_collide(Vector2(h_dir, 0), true)
+
+	if path_obstructed:
+		if h_dir != 0:
+			global_position += Vector2(0, -8)
+			if not move_and_collide(Vector2(h_dir * 2, 0), true) and angle < SHALLOW_SLOPE_ANGLE:
+				global_position += Vector2(h_dir * 2, 0)
+				move_and_collide(Vector2(0, 8))
+				apply_floor_snap()
+			else:
+				global_position -= Vector2(0, -8)
+	
+	# animation
+	if curr_anim != "attack":
+		if h_dir != 0:
+			look_dir = h_dir
+			sprite.flip_h = h_dir > 0
+			if abs(velocity.x) > base_max_speed:
+				var transfer_time = curr_anim == "walk"
+				var current_anim_time = animation.get_current_animation_position()
+				curr_anim = "sprint"
+				if transfer_time:
+					animation.seek(current_anim_time, false)
+			else:
+				var transfer_time = curr_anim == "sprint"
+				var current_anim_time = animation.get_current_animation_position()
+				curr_anim = "walk"
+				if transfer_time:
+					animation.seek(current_anim_time, false)
 		else:
-			var transfer_time = curr_anim == "sprint"
-			var current_anim_time = animation.get_current_animation_position()
-			curr_anim = "walk"
-			if transfer_time:
-				animation.seek(current_anim_time, false)
-	else:
-		curr_anim = "idle"
+			curr_anim = "idle"
+		if attack_rq > 0:
+			curr_anim = "attack"
 	if animation.current_animation != curr_anim:
 		animation.play(curr_anim)
 	
+func attack_1():
+	print("attack 1")
+	
+func attack_2():
+	print("attack 2")
+
+func attack_3():
+	print("attack 3")
+	
+func attack_end():
+	print("attack end")
+	if attack_rq > 0:
+		curr_anim = "attack"
+	else:
+		curr_anim = "idle"

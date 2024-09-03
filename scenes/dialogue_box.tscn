@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://cgm1tfgcawlmy"]
+
+[ext_resource type="Script" path="res://scripts/dialogue_box.gd" id="1_pt2af"]
+
+[node name="DialogueBox" type="Node2D"]
+script = ExtResource("1_pt2af")
+
+[node name="Text" type="RichTextLabel" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -186.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "dialogo teste alegria felicidade blablabla"
+scroll_active = false
